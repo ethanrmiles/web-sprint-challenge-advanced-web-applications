@@ -22,7 +22,7 @@ export default function LoginForm(props) {
 
  
   const { username, password } = values
-  const enabled = username.length >= 3 && password.length >= 8
+  const enabled = username.trim().length>= 3 && password.trim().length >= 8
 
   return (
     <form id="loginForm" onSubmit={onSubmit}>
