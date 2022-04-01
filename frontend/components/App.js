@@ -48,12 +48,13 @@ export default function App() {
       const welcomeMessage = res.data.message
       setMessage(welcomeMessage)
       window.localStorage.setItem('token', token)
+      setSpinnerOn(false)
+      redirectToArticles()
     })
     .catch(err => {
       setMessage(err?.response?.data?.message)
     })
-    setSpinnerOn(false)
-    redirectToArticles()
+  
   }
 
   const getArticles = () => {
@@ -88,11 +89,12 @@ export default function App() {
     axiosWithAuth().post(articlesUrl, article)
     .then(res => {
       setSpinnerOn(true)
-      setMessage(res.data.message)
+      setMessage("")
       setArticles([...articles, res.data.article])
+      setMessage(res.data.message)
       setSpinnerOn(false)
     })
-    .then(err => {
+    .catch(err => {
       setMessage(err?.response?.data?.message)
     })
   }
@@ -146,9 +148,11 @@ export default function App() {
             <>
               <ArticleForm 
               postArticle={postArticle}
-              currentArticle={currentArticleId}
+              currentArticleId={currentArticleId}
               articles={articles}
               updateArticle={updateArticle}
+              setCurrentArticleId={setCurrentArticleId}
+              message={message}
               />
               <Articles
               deleteArticle={deleteArticle}
