@@ -100,10 +100,23 @@ export default function App() {
   const updateArticle = ({ article_id, article }) => {
     // ✨ implement
     // You got this!
+    setCurrentArticleId(article_id)
+    console.log(currentArticleId)
   }
 
   const deleteArticle = article_id => {
-    // ✨ implement
+    axiosWithAuth().delete(`${articlesUrl}/${article_id}`)
+    .then(res => {
+      setSpinnerOn(true)
+      setMessage(res.data.message)
+      setArticles(articles.filter(art => {
+        return art.article_id !== article_id
+      }))
+      setSpinnerOn(false)
+    })
+    .catch(err => {
+      setMessage(err.data.message)
+    })
   }
 
   return (
