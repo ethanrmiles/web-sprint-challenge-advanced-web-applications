@@ -6,6 +6,7 @@ import Message from './Message'
 import ArticleForm from './ArticleForm'
 import Spinner from './Spinner'
 import axios from 'axios'
+import axiosWithAuth from '../axios/index'
 
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
@@ -40,19 +41,19 @@ export default function App() {
     // On success, we should set the token to local storage in a 'token' key,
     // put the server success message in its proper state, and redirect
     // to the Articles screen. Don't forget to turn off the spinner!
+    setSpinnerOn(true)
     axios.post(loginUrl, {username, password})
     .then(res => {
-      setSpinnerOn(true)
       const token = res.data.token
       const welcomeMessage = res.data.message
       setMessage(welcomeMessage)
       window.localStorage.setItem('token', token)
-      setSpinnerOn(false)
-      redirectToArticles()
     })
-    .catch(err => {
-      debugger
+    .catch(res => {
+      setMessage(res.data.message)
     })
+    setSpinnerOn(false)
+    redirectToArticles()
   }
 
   const getArticles = () => {
@@ -64,6 +65,18 @@ export default function App() {
     // If something goes wrong, check the status of the response:
     // if it's a 401 the token might have gone bad, and we should redirect to login.
     // Don't forget to turn off the spinner!
+    
+    axiosWithAuth().get(articlesUrl)
+    .then(res => {
+      setSpinnerOn(true)
+      setMessage("")
+      setArticles(res.data.articles)
+      setMessage(res.data.message)
+      setSpinnerOn(false)
+    })
+    .catch(res => {
+      setMessage(res.data.message)
+    })
   }
 
   const postArticle = article => {
@@ -99,7 +112,10 @@ export default function App() {
           <Route path="articles" element={
             <>
               <ArticleForm />
-              <Articles />
+              <Articles
+              getArticles={getArticles}
+              articles={articles}
+              />
             </>
           } />
         </Routes>
