@@ -50,7 +50,7 @@ export default function App() {
       window.localStorage.setItem('token', token)
     })
     .catch(err => {
-      setMessage(err.data.message)
+      setMessage(err?.response?.data?.message)
     })
     setSpinnerOn(false)
     redirectToArticles()
@@ -75,7 +75,7 @@ export default function App() {
       setSpinnerOn(false)
     })
     .catch(err => {
-      setMessage(err.data.message)
+      setMessage(err?.response?.data?.message)
       redirectToLogin()
     })
   }
@@ -93,15 +93,14 @@ export default function App() {
       setSpinnerOn(false)
     })
     .then(err => {
-      setMessage(err.data.message)
+      setMessage(err?.response?.data?.message)
     })
   }
 
   const updateArticle = ({ article_id, article }) => {
     // ✨ implement
     // You got this!
-    setCurrentArticleId(article_id)
-    console.log(currentArticleId)
+   
   }
 
   const deleteArticle = article_id => {
@@ -115,7 +114,7 @@ export default function App() {
       setSpinnerOn(false)
     })
     .catch(err => {
-      setMessage(err.data.message)
+      setMessage(err?.response?.data?.message)
     })
   }
 
@@ -137,12 +136,15 @@ export default function App() {
             <>
               <ArticleForm 
               postArticle={postArticle}
+              currentArticle={currentArticleId}
+              articles={articles}
               />
               <Articles
               deleteArticle={deleteArticle}
               updateArticle={updateArticle}
               getArticles={getArticles}
               articles={articles}
+              setCurrentArticleId={setCurrentArticleId}
               />
             </>
           } />
