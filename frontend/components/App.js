@@ -49,8 +49,8 @@ export default function App() {
       setMessage(welcomeMessage)
       window.localStorage.setItem('token', token)
     })
-    .catch(res => {
-      setMessage(res.data.message)
+    .catch(err => {
+      setMessage(err.data.message)
     })
     setSpinnerOn(false)
     redirectToArticles()
@@ -74,8 +74,9 @@ export default function App() {
       setMessage(res.data.message)
       setSpinnerOn(false)
     })
-    .catch(res => {
-      setMessage(res.data.message)
+    .catch(err => {
+      setMessage(err.data.message)
+      redirectToLogin()
     })
   }
 
@@ -84,6 +85,16 @@ export default function App() {
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
+    axiosWithAuth().post(articlesUrl, article)
+    .then(res => {
+      setSpinnerOn(true)
+      setMessage(res.data.message)
+      setArticles([...articles, res.data.article])
+      setSpinnerOn(false)
+    })
+    .then(err => {
+      setMessage(err.data.message)
+    })
   }
 
   const updateArticle = ({ article_id, article }) => {
@@ -111,8 +122,12 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm />
+              <ArticleForm 
+              postArticle={postArticle}
+              />
               <Articles
+              deleteArticle={deleteArticle}
+              updateArticle={updateArticle}
               getArticles={getArticles}
               articles={articles}
               />
